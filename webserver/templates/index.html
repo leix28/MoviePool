@@ -62,20 +62,22 @@
   <header id="page_search" class="intro">
     <div class="intro-body">
       <div class="container">
-        <div class="row">
-          <div class="col-md-8 col-md-offset-2">
-            <h1 class="brand-heading">Movie Pool</h1>
-            <div class="input-group input-group-lg">
-              <input type="text" class="form-control" placeholder="在电影池搜电影..." aria-describedby="sizing-addon1">
-              <span class="input-group-btn">
-                <button class="btn " type="button">搜一下</button>
-              </span>
+        <form method="get" name="searchbox" action="?">
+          <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <h1 class="brand-heading">Movie Pool</h1>
+              <div class="input-group input-group-lg">
+                <input type="text" class="form-control" name="search" placeholder="在电影池搜电影..." aria-describedby="sizing-addon1">
+                <span class="input-group-btn">
+                  <input class="btn" type="submit" value="搜一下"/>
+                </span>
+              </div>
+              <a href="#page_recommend" class="btn btn-circle page-scroll">
+                <i class="fa fa-angle-double-down animated"></i>
+              </a>
             </div>
-            <a href="#page_recommend" class="btn btn-circle page-scroll">
-              <i class="fa fa-angle-double-down animated"></i>
-            </a>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </header>
