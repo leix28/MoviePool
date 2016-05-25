@@ -59,16 +59,19 @@
   </nav>
 
   <!-- Intro Header -->
-  <header id="page_search" class="introsmall">
-    <!-- <div class="intro-body">
-      <div class="container">
-      </div>
-    </div> -->
+  <header class="introsmall">
   </header>
 
   <section id="page_search" class="content-section">
     <div class="container" id="result">
-
+      {% for item in results %}
+      <div class="col-md-3">
+          <div style="height:25em;padding-bottom:1em">
+          <img src="{{item.images.large}}" style="height:100%;width:100%;"/>
+          </div>
+          <h4>{{item.title}}</h4>
+      </div>
+      {% endfor %}
     </div>
   </section>
 

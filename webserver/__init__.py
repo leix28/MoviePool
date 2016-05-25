@@ -10,5 +10,6 @@ def hello_word():
     if search is None:
         return render_template('index.html')
     else:
-        return render_template('list.html')
-        return search
+        results = db.search(search, start=0, count=20)
+        results = map(db.getDoubanBasic, results)
+        return render_template('list.html', results=results)
