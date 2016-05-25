@@ -43,7 +43,7 @@ def fetchDouban(doubanID):
     return data
 
 def fetchIMDB(IMDBID):
-    
+    pass
 
 if __name__ == '__main__':
     print searchMovieDoubanID(u"速度与激情")
