@@ -1,15 +1,26 @@
 from flask import Flask, render_template, request
 import db
 import logging
+import json
 
 app = Flask(__name__)
 
 @app.route('/')
-def hello_word():
+def index():
     search = request.args.get('search')
     if search is None:
-        return render_template('index.html')
+        return app.send_static_file('html/index.html')
     else:
         results = db.search(search, start=0, count=20)
         results = map(db.getDoubanBasic, results)
-        return render_template('list.html', results=results)
+        return app.send_static_file('html/list.html')
+
+@app.route('/api/search')
+def search_api():
+    search = request.args.get('search')
+    results = db.search(search, start=0, count=20)
+    results = map(db.getDoubanBasic, results)
+    results = filter(lambda x: not x is None, results)
+    for item in results:
+        del item['_id']
+    return json.dumps(results)

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh_cn">
+<html lang="zh_cn" ng-app="searchApp">
 
 <head>
 
@@ -21,10 +21,10 @@
   <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <link href="static/google/Lora.css" rel="stylesheet" type="text/css">
   <link href="static/google/Montserrat.css" rel="stylesheet" type="text/css">
-
+  <script src="static/js/angular.min.js"></script>
 </head>
 
-<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-controller="searchController">
 
   <!-- Navigation -->
   <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
@@ -64,14 +64,12 @@
 
   <section id="page_search" class="content-section">
     <div class="container" id="result">
-      {% for item in results %}
-      <div class="col-md-3">
+      <div class="col-md-3" ng-repeat="item in results">
           <div style="height:25em;padding-bottom:1em">
           <img src="{{item.images.large}}" style="height:100%;width:100%;"/>
           </div>
-          <h4>{{item.title}}</h4>
+          <h5>{{item.title}}</h5>
       </div>
-      {% endfor %}
     </div>
   </section>
 
@@ -93,7 +91,8 @@
 
   <!-- Custom Theme JavaScript -->
   <script src="static/js/grayscale.js"></script>
-
+  
+  <script src="static/js/app.js"></script>
 </body>
 
 </html>
