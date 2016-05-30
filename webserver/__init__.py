@@ -15,6 +15,10 @@ def index():
         results = map(db.getDoubanBasic, results)
         return app.send_static_file('html/list.html')
 
+@app.route('/movie/<id>')
+def movie(id):
+    return app.send_static_file('html/movie.html')
+
 @app.route('/api/search')
 def search_api():
     search = request.args.get('search')
@@ -24,3 +28,7 @@ def search_api():
     for item in results:
         del item['_id']
     return json.dumps(results)
+
+@app.route('/api/movie/<id>')
+def movie_api(id):
+    return id

@@ -12,16 +12,16 @@
   <title>Grayscale - Start Bootstrap Theme</title>
 
   <!-- Bootstrap Core CSS -->
-  <link href="static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Custom CSS -->
-  <link href="static/css/grayscale.css" rel="stylesheet">
+  <link href="/static/css/grayscale.css" rel="stylesheet">
 
   <!-- Custom Fonts -->
-  <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  <link href="static/google/Lora.css" rel="stylesheet" type="text/css">
-  <link href="static/google/Montserrat.css" rel="stylesheet" type="text/css">
-  <script src="static/js/angular.min.js"></script>
+  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="/static/google/Lora.css" rel="stylesheet" type="text/css">
+  <link href="/static/google/Montserrat.css" rel="stylesheet" type="text/css">
+  <script src="/static/js/angular.min.js"></script>
 </head>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-controller="searchController">
@@ -65,10 +65,12 @@
   <section id="page_search" class="content-section">
     <div class="container" id="result">
       <div class="col-md-3" ng-repeat="item in results">
+        <a href='/movie/{{item.id}}'>
           <div style="height:25em;padding-bottom:1em">
           <img src="{{item.images.large}}" style="height:100%;width:100%;"/>
           </div>
           <h5>{{item.title}}</h5>
+        </a>
       </div>
     </div>
   </section>
@@ -81,18 +83,18 @@
   </footer>
 
   <!-- jQuery -->
-  <script src="static/js/jquery.js"></script>
+  <script src="/static/js/jquery.js"></script>
 
   <!-- Bootstrap Core JavaScript -->
-  <script src="static/js/bootstrap.min.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
 
   <!-- Plugin JavaScript -->
-  <script src="static/js/jquery.easing.min.js"></script>
+  <script src="/static/js/jquery.easing.min.js"></script>
 
   <!-- Custom Theme JavaScript -->
-  <script src="static/js/grayscale.js"></script>
-  
-  <script src="static/js/app.js"></script>
+  <script src="/static/js/grayscale.js"></script>
+
+  <script src="/static/js/app.js"></script>
 </body>
 
 </html>
