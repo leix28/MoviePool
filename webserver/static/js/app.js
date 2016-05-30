@@ -8,11 +8,19 @@ searchApp.controller('searchController', function searchController($scope, $http
         });
         $scope.results = data;
     });
-
+});
+searchApp.filter('reshape', function () {
+    return function (input, sub_size) {
+        var newArr = [];
+        if(!input)return input;
+        for(var i=0; i<input.length; i+=sub_size)
+            newArr.push(input.slice(i,i+sub_size));
+        return newArr;
+    };
 });
 
-var searchApp = angular.module('movieApp', []);
+var movieApp = angular.module('movieApp', []);
 
-searchApp.controller('movieController', function movieController($scope, $http) {
+movieApp.controller('movieController', function movieController($scope, $http) {
   $http.get("/api/movie/" + location.pathname.split('/')[2]);
 });
