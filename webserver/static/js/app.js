@@ -13,8 +13,11 @@ searchApp.filter('reshape', function () {
     return function (input, sub_size) {
         var newArr = [];
         if(!input)return input;
+        if(input.reshaped)
+            return input.reshaped;
         for(var i=0; i<input.length; i+=sub_size)
             newArr.push(input.slice(i,i+sub_size));
+        input.reshaped=newArr;
         return newArr;
     };
 });
