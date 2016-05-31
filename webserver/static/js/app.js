@@ -25,5 +25,22 @@ searchApp.filter('reshape', function () {
 var movieApp = angular.module('movieApp', []);
 
 movieApp.controller('movieController', function movieController($scope, $http) {
-  $http.get("/api/movie/" + location.pathname.split('/')[2]);
+    $scope.resources = {ready: false, list: []};
+    $scope.imdbId = 'tt0068646';
+    $scope.download = function(item){
+        if(item.cached){
+            $('#iframe_for_download').prop('src', '/api/download/'+item.download_id);
+        }else if(item.progress >= 0){
+            // TODO: 注册完成通知
+        }else{
+            $http.get('/api/cache/'+item.download_id).success(function(data){
+                // TODO: 注册完成通知
+            });
+        }
+    };
+    $http.get("/api/movie/" + location.pathname.split('/')[2]);
+    $http.get("/api/resources/"+$scope.imdbId).success(function(data){
+        $scope.resources.list = data;
+        $scope.resources.ready=true;
+    });
 });

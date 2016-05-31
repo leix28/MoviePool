@@ -1,5 +1,5 @@
 from flask import render_template, request
-import db
+import db.db as db
 import logging
 import json
 
@@ -32,3 +32,7 @@ def search_api():
 @app.route('/api/movie/<id>')
 def movie_api(id):
     return id
+
+@app.route('/api/resources/<id>')
+def resources_api(id):
+    return json.dumps(db.getMovieResources(id))

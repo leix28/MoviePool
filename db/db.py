@@ -4,7 +4,7 @@ from pymongo import MongoClient
 import logging
 import json
 import time
-from crawler import searchMovieDouban, fetchDouban
+from crawler import searchMovieDouban, fetchDouban, searchByrResources
 
 
 DB = "MovieDB"
@@ -59,6 +59,15 @@ def getIMDBID(doubanID):
 
 def getDoubanID(IMDBID):
     pass
+
+def getMovieResources(IMDBid):
+    r = searchByrResources(IMDBid)
+    for idx in xrange(len(r)):
+        r[idx]['cached'] = False
+        r[idx]['progress'] = 2
+        r[idx]['download_id'] = 9
+
+    return r
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,\
