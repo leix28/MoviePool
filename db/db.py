@@ -15,7 +15,10 @@ IMDBBasic = 'IMDBBasic'          #unique "IMDBid"
 IDCvt = 'IDConvert'              #unique "id" "IMDBid"
 
 TIME_STAMP = 'TIME_STAMP'
-TIME_OUT = 48 * 3600
+TIME_OUT = 24 * 3600
+
+pop = None
+pop_time = 0
 
 def search(query, start=0, count=5):
     data = searchMovieDouban(query, start, count)
@@ -28,6 +31,10 @@ def search(query, start=0, count=5):
     return data
 
 def getpop(count=8):
+    global pop
+    global pop_time
+    if (not pop is None) and (pop_time + TIME_OUT < time.time()):
+        return pop
     data = getMoviePopDouban(count)
     if data is None:
         return None
@@ -35,6 +42,8 @@ def getpop(count=8):
     for item in data:
         result = coll.update_one({'id': item['id']}, {'$set': item}, upsert=True)
         logging.info(result)
+    pop = data
+    pop_time = time.time()
     return data
 
 
@@ -60,9 +69,10 @@ def getDoubanAdvance(doubanID):
         ndata.update({TIME_STAMP : time.time()})
         result = coll.update_one({'id': doubanID}, {'$set': ndata}, upsert=True)
         logging.info(result)
-        if data.has_key('IMDB'):
-            result = coll2.update_one({'id': doubanID, 'IMDBid':data['IMDB']}, {'$set': ndata}, upsert=True)
+        if ndata.has_key('IMDB'):
+            result = coll2.update_one({'id': doubanID}, {'$set': {'IMDBid':ndata['IMDB']}}, upsert=True)
             logging.info(result)
+        data = ndata
     return data
 
 def getIMDBBasic(IMDBID):
