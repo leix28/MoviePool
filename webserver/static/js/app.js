@@ -70,7 +70,8 @@ movieApp.controller('movieController', function movieController($scope, $http) {
             $http.get('/api/download/'+item.download_id).success(function(data){
                 console.log(data)
                 if(data.reason === 0){
-                    $('#iframe_for_download').prop('src', data.path);
+                    // $('#iframe_for_download').prop('src', data.path);
+                    window.open(data.path,'_blank');
                 }
             });
         }else if(item.progress >= 0){
