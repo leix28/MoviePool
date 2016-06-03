@@ -4,9 +4,9 @@ from pymongo import MongoClient
 import logging
 import json
 import time
-from downloader import getDownloadStatusEach
 from crawler import searchMovieDouban, fetchDouban, \
     searchByrResources, getMoviePopDouban
+from downloader import getDownloadStatusEach, startNewDownload
 
 
 DB = "MovieDB"
@@ -92,8 +92,25 @@ def getMovieResources(IMDBid):
 
     return r
 
+def cacheResources(resId):
+    coll = MongoClient()[DB][DownloadBasic]
+    cur = coll.find({'byr_id': resId})
+    if cur.count() > 0:
+        return {'reason': 1}
+    else:
+        ret,h = startNewDownload(resId)
+        print ret, h
+        if not ret:
+            return {'reason': 2}
+        else:
+            coll = MongoClient()[DB][DownloadBasic]
+            data = {'byr_id': resId,'bt_hash': h}
+            coll.update_one({'byr_id': resId}, {'$set': data}, upsert=True)
+            return {'reason': 0}
+
+
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,\
+    logging.basicConfig(level=logging.DEBUG,\
         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',\
         datefmt='%m-%d %H:%M')
     # print search(u"速度与激情")

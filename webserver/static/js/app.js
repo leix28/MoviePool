@@ -59,6 +59,7 @@ movieApp.controller('movieController', function movieController($scope, $http) {
             // TODO: 注册完成通知
         }else{
             $http.get('/api/cache/'+item.download_id).success(function(data){
+                console.log(data)
                 // TODO: 注册完成通知
             });
         }

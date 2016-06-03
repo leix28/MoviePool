@@ -38,3 +38,7 @@ def movie_api(id):
 @app.route('/api/resources/<id>')
 def resources_api(id):
     return json.dumps(db.getMovieResources(id))
+
+@app.route('/api/cache/<res_id>')
+def cache_api(res_id):
+    return json.dumps(db.cacheResources(res_id))
