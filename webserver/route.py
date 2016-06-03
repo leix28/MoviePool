@@ -11,8 +11,6 @@ def index():
     if search is None:
         return app.send_static_file('html/index.html')
     else:
-        results = db.search(search, start=0, count=20)
-        results = map(db.getDoubanBasic, results)
         return app.send_static_file('html/list.html')
 
 @app.route('/movie/<id>')
@@ -23,15 +21,19 @@ def movie(id):
 def search_api():
     search = request.args.get('search')
     results = db.search(search, start=0, count=20)
-    results = map(db.getDoubanBasic, results)
-    results = filter(lambda x: not x is None, results)
-    for item in results:
-        del item['_id']
+    return json.dumps(results)
+
+@app.route('/api/pop')
+def pop_api():
+    results = db.getpop(count=8)
     return json.dumps(results)
 
 @app.route('/api/movie/<id>')
 def movie_api(id):
-    return id
+    data = db.getDoubanAdvance(id)
+    del data['_id']
+    del data['filmInfo']
+    return json.dumps(data)
 
 @app.route('/api/resources/<id>')
 def resources_api(id):

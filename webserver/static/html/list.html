@@ -43,13 +43,13 @@
         <ul class="nav navbar-nav">
           <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
           <li class="page-scroll">
-            <a href="#page_search">搜索</a>
+            <a href="/">搜索</a>
           </li>
           <li>
-            <a class="page-scroll" href="#page_recommend">热门推荐</a>
+            <a href="/#page_recommend">热门推荐</a>
           </li>
           <li>
-            <a class="page-scroll" href="#page_download">下载进度</a>
+            <a href="/#page_download">立即下载</a>
           </li>
         </ul>
       </div>
@@ -64,7 +64,8 @@
 
   <section id="page_search" class="content-section">
     <div class="container" id="result">
-      {{results.length}}
+      <div class="col-lg-8 col-lg-offset-2">
+      <!-- {{results.length}} -->
       <div class="row" ng-repeat="row in (results | reshape:4)">
         <div class="col-md-3" ng-repeat="item in row">
           <a href='/movie/{{item.id}}'>
@@ -72,6 +73,7 @@
             <h5>{{item.title}}</h5>
           </a>
         </div>
+      </div>
       </div>
     </div>
   </section>

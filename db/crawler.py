@@ -6,7 +6,7 @@ import json
 import traceback  
 import urlparse
 from bs4 import BeautifulSoup
-
+import re
 
 URL = 'https://api.douban.com'
 BYR_SEARCH_URL = 'http://bt.byr.cn/torrents.php'
@@ -40,7 +40,7 @@ def searchByrResources(imdbId):
         return result
     except Exception, e:
         logging.warning('searchByrResources {} {}'.format(imdbId, e))
-        traceback.print_exc()  
+        traceback.print_exc()
     return []
 
 def searchMovieDouban(query, start=0, count=5):
@@ -61,16 +61,28 @@ def searchMovieDouban(query, start=0, count=5):
 
     return json.loads(r.text)['subjects']
 
+def getMoviePopDouban(count=8):
+    try:
+        r = requests.get(URL + '/v2/movie/in_theaters')
+        assert r.status_code == 200
+    except:
+        logging.warning('getMoviePopDouban Failed')
+        return None
+    return json.loads(r.text)['subjects'][:count]
+
 def fetchDouban(doubanID):
     try:
-        r = requests.get('https://movie.douban.com/subject/' + doubanID)
-        assert r.status_code == 200
-        soup = BeautifulSoup(r.text, 'lxml')
-        info = str(soup.find(id='info'))
         r = requests.get(URL + '/v2/movie/subject/' + doubanID)
         assert r.status_code == 200
         data = json.loads(r.text)
-        data.update({'filmInfo': info})
+        try:
+            r = requests.get('https://movie.douban.com/subject/' + doubanID)
+            assert r.status_code == 200
+            soup = BeautifulSoup(r.text, 'lxml')
+            imdb = soup.find(id='info').find('a', text=re.compile("tt\\d*")).text
+            data.update({'IMDB': imdb})
+        except:
+            logging.warning("ERROR in load IMDB ID")
     except:
         logging.warning(doubanID + 'fetchdata failed')
         return None

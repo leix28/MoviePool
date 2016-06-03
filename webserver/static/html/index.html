@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh_cn">
+<html lang="zh_cn" ng-app="indexApp">
 
 <head>
 
@@ -21,10 +21,10 @@
   <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <link href="/static/google/Lora.css" rel="stylesheet" type="text/css">
   <link href="/static/google/Montserrat.css" rel="stylesheet" type="text/css">
-
+  <script src="/static/js/angular.min.js"></script>
 </head>
 
-<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-controller="indexController">
 
   <!-- Navigation -->
   <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
@@ -49,7 +49,7 @@
             <a class="page-scroll" href="#page_recommend">热门推荐</a>
           </li>
           <li>
-            <a class="page-scroll" href="#page_download">下载进度</a>
+            <a class="page-scroll" href="#page_download">立即下载</a>
           </li>
         </ul>
       </div>
@@ -89,19 +89,25 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2">
         <h2>热门电影</h2>
+        <div class="row" ng-repeat="row in (results | reshape:4)">
+          <div class="col-md-3" ng-repeat="item in row">
+            <a href='/movie/{{item.id}}'>
+              <img src="{{item.images.large}}" style="height:100%;width:100%;"/>
+              <h5>{{item.title}}</h5>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Download Section -->
   <section id="page_download" class="content-section text-center">
-    <div class="download-section">
       <div class="container">
         <div class="col-lg-8 col-lg-offset-2">
-          <h2>下载进度</h2>
+          <h2>立即下载</h2>
         </div>
       </div>
-    </div>
   </section>
 
   <!-- Footer -->
@@ -122,7 +128,7 @@
 
   <!-- Custom Theme JavaScript -->
   <script src="/static/js/grayscale.js"></script>
-
+  <script src="/static/js/app.js"></script>
 </body>
 
 </html>

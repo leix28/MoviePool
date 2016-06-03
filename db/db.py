@@ -4,8 +4,10 @@ from pymongo import MongoClient
 import logging
 import json
 import time
-from crawler import searchMovieDouban, fetchDouban, searchByrResources
 from downloader import getDownloadStatusEach
+from crawler import searchMovieDouban, fetchDouban, \
+    searchByrResources, getMoviePopDouban
+
 
 DB = "MovieDB"
 DownloadBasic = 'DownloadBasic'  #unique 'byr_id'
@@ -20,14 +22,23 @@ TIME_OUT = 48 * 3600
 def search(query, start=0, count=5):
     data = searchMovieDouban(query, start, count)
     if data is None:
-        return []
-    idlist = []
+        return None
     coll = MongoClient()[DB][DoubanBasic]
     for item in data:
-        idlist.append(item['id'])
         result = coll.update_one({'id': item['id']}, {'$set': item}, upsert=True)
         logging.info(result)
-    return idlist
+    return data
+
+def getpop(count=8):
+    data = getMoviePopDouban(count)
+    if data is None:
+        return None
+    coll = MongoClient()[DB][DoubanBasic]
+    for item in data:
+        result = coll.update_one({'id': item['id']}, {'$set': item}, upsert=True)
+        logging.info(result)
+    return data
+
 
 def getDoubanBasic(doubanID):
     coll = MongoClient()[DB][DoubanBasic]
@@ -39,6 +50,7 @@ def getDoubanBasic(doubanID):
 
 def getDoubanAdvance(doubanID):
     coll = MongoClient()[DB][DoubanAdvance]
+    coll2 = MongoClient()[DB][IDCvt]
     cur = coll.find({'id': doubanID})
     data = None
     if cur.count() > 0:
@@ -50,6 +62,9 @@ def getDoubanAdvance(doubanID):
         ndata.update({TIME_STAMP : time.time()})
         result = coll.update_one({'id': doubanID}, {'$set': ndata}, upsert=True)
         logging.info(result)
+        if data.has_key('IMDB'):
+            result = coll2.update_one({'id': doubanID, 'IMDBid':data['IMDB']}, {'$set': ndata}, upsert=True)
+            logging.info(result)
     return data
 
 def getIMDBBasic(IMDBID):
