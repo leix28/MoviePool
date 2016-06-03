@@ -7,16 +7,16 @@ import traceback
 import urlparse
 from bs4 import BeautifulSoup
 import re
+from webserver import app
 
 URL = 'https://api.douban.com'
 BYR_SEARCH_URL = 'http://bt.byr.cn/torrents.php'
 BYR_DOWNLOAD_URL = 'http://bt.byr.cn/download.php'
-BYR_COOKIE = {'Cookie': 'Hm_lvt_9ea605df687f067779bde17347db8645=1463235397,1463305118,1463663039,1463885401; Hm_lpvt_9ea605df687f067779bde17347db8645=1464697392; c_secure_uid=MTgyNzAz; c_secure_pass=e27cebdda92981ed700ee16cab8efa99; c_secure_ssl=bm9wZQ%3D%3D; c_secure_tracker_ssl=bm9wZQ%3D%3D; c_secure_login=bm9wZQ%3D%3D'}
 
 def searchByrResources(imdbId):
     try:
         arg = {'search': imdbId, 'search_area': 4}
-        r = requests.get(BYR_SEARCH_URL, params=arg, headers=BYR_COOKIE)
+        r = requests.get(BYR_SEARCH_URL, params=arg, headers={'cookie': app.config['BYR_COOKIE']})
         assert r.status_code == 200
 
         result = []
@@ -47,7 +47,7 @@ def searchByrResources(imdbId):
 def getByrTorrent(ByrId):
     try:
         arg = {'id': ByrId}
-        r = requests.get(BYR_DOWNLOAD_URL, params=arg, headers=BYR_COOKIE)
+        r = requests.get(BYR_DOWNLOAD_URL, params=arg, headers={'cookie': app.config['BYR_COOKIE']})
         assert r.status_code == 200
         return r.content
     except Exception, e:

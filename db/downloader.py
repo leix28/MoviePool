@@ -1,5 +1,18 @@
 import bencode, hashlib, StringIO
+from deluge_client import DelugeRPCClient
+import logging
+import base64
+
 import crawler
+from webserver import app
+
+def initDownloader():
+    global client
+    logging.info("Init")
+    client = DelugeRPCClient(app.config['DELUGE_HOST'], 58846, app.config['DELUGE_USER'], app.config['DELUGE_PASSWD'])
+    client.connect()
+    logging.info("connected={}".format(client.connected))
+
 
 def getTorrentHash(torrent_data):
     torrent = bencode.bdecode(torrent_data)
@@ -10,17 +23,29 @@ def startNewDownload(ByrId):
     torrent = crawler.getByrTorrent(ByrId)    
     if torrent is None:
         return (False, None)
-    #TODO: to deluge
+    thash = getTorrentHash(torrent)
+    ret = client.call('core.add_torrent_file', '', base64.b64encode(torrent), {})
+    print ret
 
-    return (True, getTorrentHash(torrent))
+    return (ret==thash, thash)
+
 
 
 def getDownloadStatusEach(entries):
+    query = []
     for item in entries:
         if item['bt_hash']:
-            #TODO from deluge
-            item['progress'] = 0
+            query.append(item['bt_hash'])
+            item['progress'] = -1
             item['finished'] = False
         else:
             item['progress'] = -1
             item['finished'] = False
+    ret = client.call('core.get_torrents_status', {'hash': query}, ['is_finished','progress'])
+    print ret
+
+    for item in entries:
+        if item['bt_hash'] and ret.has_key(item['bt_hash']):
+            item['progress'] = ret[item['bt_hash']]['progress']
+            item['finished'] = ret[item['bt_hash']]['is_finished']
+

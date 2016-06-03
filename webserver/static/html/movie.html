@@ -22,6 +22,7 @@
   <link href="/static/google/Lora.css" rel="stylesheet" type="text/css">
   <link href="/static/google/Montserrat.css" rel="stylesheet" type="text/css">
   <script src="/static/js/angular.min.js"></script>
+  <script src="/static/js/app.js"></script>
 </head>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-controller="movieController">
@@ -119,7 +120,7 @@
               <td>{{item.downloading}}</td>
               <td>{{item.uploading}}</td>
               <td>
-                <a href="#" ng-click="download(item)">{{item.finished ? '直接下载' :(item.progress>=0 ? '下载中：'+item.progress+'%' : '开始缓存')}}</a>
+                <a href="#" ng-click="download(item)">{{item.finished ? '直接下载' :(item.progress>=0 ? '下载中：'+(item.progress|number:2)+'%' : '开始缓存')}}</a>
               </td>
             </tr>
           </table>
@@ -149,7 +150,6 @@
   <!-- Custom Theme JavaScript -->
   <script src="/static/js/grayscale.js"></script>
 
-  <script src="/static/js/app.js"></script>
 </body>
 
 </html>

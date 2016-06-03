@@ -1,0 +1,1 @@
+`sudo pip install lxml bencode deluge-client bs4 flask pymongo`
