@@ -3,7 +3,7 @@ import requests
 import logging
 import sys
 import json
-import traceback  
+import traceback
 import urlparse
 from bs4 import BeautifulSoup
 import re
@@ -91,7 +91,7 @@ def fetchDouban(doubanID):
             r = requests.get('https://movie.douban.com/subject/' + doubanID)
             assert r.status_code == 200
             soup = BeautifulSoup(r.text, 'lxml')
-            imdb = soup.find(id='info').find('a', text=re.compile("tt\\d*")).text
+            imdb = soup.find(id='info').find('a', href=re.compile("imdb.com"), text=re.compile("tt\\d*")).text
             data.update({'IMDB': imdb})
         except:
             logging.warning("ERROR in load IMDB ID")
@@ -107,7 +107,8 @@ def fetchIMDB(IMDBID):
         assert r.status_code == 200
         soup = BeautifulSoup(r.text, 'lxml')
         imdbScore = soup.find(class_='ratingValue').text
-        data = {'score' : imdbScore.split('/')[0] }
+        storyline = soup.find(id='titleStoryLine').find('p').text
+        data = {'score' : imdbScore.split('/')[0], 'summary': storyline }
     except:
         logging.warning("ERROR in IMDB Score")
     return data
