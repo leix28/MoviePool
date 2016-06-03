@@ -57,3 +57,10 @@ def resources_api(id):
 @app.route('/api/cache/<res_id>')
 def cache_api(res_id):
     return json.dumps(db.cacheResources(res_id))
+
+@app.route('/api/progress/<res_id>')
+def progress_api(res_id):
+    return json.dumps(db.getProgress(res_id))
+
+
+

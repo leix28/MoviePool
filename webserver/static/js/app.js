@@ -50,6 +50,19 @@ searchApp.filter('reshape', function () {
 var movieApp = angular.module('movieApp', []);
 
 movieApp.controller('movieController', function movieController($scope, $http) {
+    function reload_progress(download_id) {
+        $http.get('/api/progress/'+download_id).success(function(data){
+            console.log(data)
+            if(data.reason===0 && $scope.resources.list){
+                for (var i = $scope.resources.list.length - 1; i >= 0; i--) {
+                    if($scope.resources.list[i].download_id == download_id){
+                        $scope.resources.list[i].progress = data.status.progress;
+                        $scope.resources.list[i].is_finished = data.status.is_finished;
+                    }
+                }
+            }
+        });
+    }
     $scope.resources = {ready: false, list: []};
     $scope.download = function(item){
         if(item.cached){
@@ -59,6 +72,9 @@ movieApp.controller('movieController', function movieController($scope, $http) {
         }else{
             $http.get('/api/cache/'+item.download_id).success(function(data){
                 console.log(data)
+                if(data.reason === 0){
+                    reload_progress(item.download_id);
+                }
                 // TODO: 注册完成通知
             });
         }

@@ -131,6 +131,16 @@ def cacheResources(resId):
             coll.update_one({'byr_id': resId}, {'$set': data}, upsert=True)
             return {'reason': 0}
 
+def getProgress(resId):
+    coll = MongoClient()[DB][DownloadBasic]
+    cur = coll.find({'byr_id': resId})
+    if cur.count() > 0:
+        item = {'download_id': resId}
+        item['bt_hash'] = cur[0]['bt_hash']
+        getDownloadStatusEach([item])
+        return {'reason': 0, 'status': item}
+    else:
+        return {'reason': 1}
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG,\
