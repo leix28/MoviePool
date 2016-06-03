@@ -63,7 +63,18 @@ movieApp.controller('movieController', function movieController($scope, $http) {
             });
         }
     };
-    $http.get("/api/movie/" + location.pathname.split('/')[2]);
+    $http.get("/api/movie/" + location.pathname.split('/')[2]).success(function(data){
+      data.castslist = Array();
+      data.casts.forEach(function(entry){
+        data.castslist.push(entry.name);
+      });
+      data.directorslist = Array();
+      data.directors.forEach(function(entry){
+        data.directorslist.push(entry.name);
+      });
+      $scope.movie=data;
+      console.log(data);
+    })
     $http.get("/api/resources/"+$scope.imdbId).success(function(data){
         $scope.resources.list = data;
         $scope.resources.ready=true;

@@ -48,6 +48,7 @@ def getDoubanBasic(doubanID):
 
 def getDoubanAdvance(doubanID):
     coll = MongoClient()[DB][DoubanAdvance]
+    coll2 = MongoClient()[DB][IDCvt]
     cur = coll.find({'id': doubanID})
     data = None
     if cur.count() > 0:
@@ -59,6 +60,9 @@ def getDoubanAdvance(doubanID):
         ndata.update({TIME_STAMP : time.time()})
         result = coll.update_one({'id': doubanID}, {'$set': ndata}, upsert=True)
         logging.info(result)
+        if data.has_key('IMDB'):
+            result = coll2.update_one({'id': doubanID, 'IMDBid':data['IMDB']}, {'$set': ndata}, upsert=True)
+            logging.info(result)
     return data
 
 def getIMDBBasic(IMDBID):

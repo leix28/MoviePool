@@ -62,11 +62,45 @@
   <header class="introsmall">
   </header>
 
+
+  <section id="resource" class="content-section">
+    <div class="container">
+      <div class="col-lg-8 col-lg-offset-2">
+        <div class="row">
+          <h3>{{movie.title}}</h3>
+        </div>
+
+        <div class="row">
+          <div class="col-md-3">
+            <a href="{{movie.images.large}}">
+            <img src="{{movie.images.large}}" style="width:100%"/>
+            </a>
+          </div>
+          <div class="col-md-6">
+            <h4>基本信息</h4>
+            <table>
+            <tr><th> 导演 </th> <td>{{movie.directorslist.join('，')}}</td></tr>
+            <tr><th> 演员 </th> <td>{{movie.castslist.join('，')}}</td></tr>
+            <tr><th> 类型 </th> <td>{{movie.genres.join('，')}}</td></tr>
+            <tr><th> IMDB </th> <td><a href="http://www.imdb.com/title/{{movie.IMDB}}">{{movie.IMDB}}</a></td></tr>
+            <tr><th> 豆瓣 </th> <td><a href="https://movie.douban.com/subject/{{movie.id}}">{{movie.id}}</a></td></tr>
+            </table>
+          </div>
+          <div class="col-md-3">
+          </div>
+        </div>
+        <hr/>
+        <div>
+          <h4>内容简介</h4>
+          <span>{{movie.summary}}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="resource" class="content-section">
     <div class="container" id="movie_div">
-      <div class="row">
-        <h3>{{movie.title}}</h3>
-      </div>
+      <div class="col-lg-8 col-lg-offset-2">
       <div class="row">
         <h3>可用资源</h3>
         <div class="row" ng-show="!resources.ready"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>加载中</div>
@@ -90,6 +124,7 @@
             </tr>
           </table>
         </div>
+      </div>
       </div>
     </div>
   </section>

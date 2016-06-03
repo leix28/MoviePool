@@ -5,7 +5,7 @@ import sys
 import json
 import traceback
 from bs4 import BeautifulSoup
-
+import re
 
 URL = 'https://api.douban.com'
 BYR_SEARCH_URL = 'http://bt.byr.cn/torrents.php'
@@ -69,14 +69,17 @@ def getMoviePopDouban(count=8):
 
 def fetchDouban(doubanID):
     try:
-        r = requests.get('https://movie.douban.com/subject/' + doubanID)
-        assert r.status_code == 200
-        soup = BeautifulSoup(r.text, 'lxml')
-        info = str(soup.find(id='info'))
         r = requests.get(URL + '/v2/movie/subject/' + doubanID)
         assert r.status_code == 200
         data = json.loads(r.text)
-        data.update({'filmInfo': info})
+        try:
+            r = requests.get('https://movie.douban.com/subject/' + doubanID)
+            assert r.status_code == 200
+            soup = BeautifulSoup(r.text, 'lxml')
+            imdb = soup.find(id='info').find('a', text=re.compile("tt\\d*")).text
+            data.update({'IMDB': imdb})
+        except:
+            logging.warning("ERROR in load IMDB ID")
     except:
         logging.warning(doubanID + 'fetchdata failed')
         return None

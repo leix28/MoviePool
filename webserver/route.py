@@ -30,7 +30,10 @@ def pop_api():
 
 @app.route('/api/movie/<id>')
 def movie_api(id):
-    return id
+    data = db.getDoubanAdvance(id)
+    del data['_id']
+    del data['filmInfo']
+    return json.dumps(data)
 
 @app.route('/api/resources/<id>')
 def resources_api(id):
