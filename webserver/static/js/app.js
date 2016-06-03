@@ -65,8 +65,14 @@ movieApp.controller('movieController', function movieController($scope, $http) {
     }
     $scope.resources = {ready: false, list: []};
     $scope.download = function(item){
-        if(item.cached){
-            $('#iframe_for_download').prop('src', '/api/download/'+item.download_id);
+        console.log(item)
+        if(item.finished){
+            $http.get('/api/download/'+item.download_id).success(function(data){
+                console.log(data)
+                if(data.reason === 0){
+                    $('#iframe_for_download').prop('src', data.path);
+                }
+            });
         }else if(item.progress >= 0){
             // TODO: 注册完成通知
         }else{

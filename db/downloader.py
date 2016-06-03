@@ -25,11 +25,17 @@ def startNewDownload(ByrId):
         return (False, None)
     thash = getTorrentHash(torrent)
     ret = client.call('core.add_torrent_file', '', base64.b64encode(torrent), {})
-    print ret
+    logging.debug(ret)
 
     return (ret==thash, thash)
 
-
+def getOfflineDownloadPath(bt_hash):
+    ret = client.call('core.get_torrents_status', {'hash': bt_hash}, ['files'])
+    logging.debug(ret)
+    if ret and ret.has_key(bt_hash):
+        f = max(ret[bt_hash]['files'], lambda t: t['size'])
+        return app.config['OFFLINE_DOWNLOADED_PATH']+f[0]['path']
+    return None
 
 def getDownloadStatusEach(entries):
     query = []
@@ -42,7 +48,7 @@ def getDownloadStatusEach(entries):
             item['progress'] = -1
             item['finished'] = False
     ret = client.call('core.get_torrents_status', {'hash': query}, ['is_finished','progress'])
-    print ret
+    logging.debug(ret)
 
     for item in entries:
         if item['bt_hash'] and ret.has_key(item['bt_hash']):

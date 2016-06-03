@@ -110,11 +110,14 @@
       <div class="col-lg-8 col-lg-offset-2">
       <div class="row">
         <h3>可用资源</h3>
-        <div class="row" ng-show="!resources.ready"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>加载中</div>
-        <div class="row" ng-show="resources.ready">
+        <div class="row center" ng-show="!resources.ready"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>加载中</div>
+        <div class="row" ng-show="resources.ready&&resources.list.length==0">
+        <div class="center">暂无资源</div>
+        </div>
+        <div class="row" ng-show="resources.ready&&resources.list.length!=0">
           <table class="table">
             <tr>
-              <th>名称</th>
+              <th width="50%">名称</th>
               <th>大小</th>
               <th>下载人数</th>
               <th>上传人数</th>
@@ -126,7 +129,9 @@
               <td>{{item.downloading}}</td>
               <td>{{item.uploading}}</td>
               <td>
-                <a href="#" ng-click="download(item)">{{item.finished ? '直接下载' :(item.progress>=0 ? '下载中：'+(item.progress|number:2)+'%' : '开始缓存')}}</a>
+                <a class="btn btn-sm" ng-class="{'btn-success':item.finished, 'btn-warning':!item.finished&&item.progress>=0,'btn-primary':item.progress<0}" ng-click="download(item)">
+                {{item.finished ? '直接下载' :(item.progress>=0 ? '下载中：'+(item.progress|number:2)+'%' : '开始缓存')}}
+                </a>
               </td>
             </tr>
           </table>

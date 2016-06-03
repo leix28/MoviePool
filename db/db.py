@@ -6,7 +6,7 @@ import json
 import time
 from crawler import searchMovieDouban, fetchDouban, \
     searchByrResources, getMoviePopDouban, fetchIMDB
-from downloader import getDownloadStatusEach, startNewDownload
+from downloader import getDownloadStatusEach, startNewDownload, getOfflineDownloadPath
 
 
 DB = "MovieDB"
@@ -139,6 +139,17 @@ def getProgress(resId):
         item['bt_hash'] = cur[0]['bt_hash']
         getDownloadStatusEach([item])
         return {'reason': 0, 'status': item}
+    else:
+        return {'reason': 1}
+
+def getDownloaded(resId):
+    coll = MongoClient()[DB][DownloadBasic]
+    cur = coll.find({'byr_id': resId})
+    if cur.count() > 0:
+        p = getOfflineDownloadPath(cur[0]['bt_hash'])
+        if p:
+            return {'reason': 0, 'path': p}
+        return {'reason': 2}
     else:
         return {'reason': 1}
 

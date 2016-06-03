@@ -4,3 +4,4 @@ class BasicConfig(object):
     DELUGE_HOST = '192.168.1.40'
     DELUGE_USER = 'soa'
     DELUGE_PASSWD = 'soa_Moviepool2016Spring'
+    OFFLINE_DOWNLOADED_PATH = 'http://192.168.1.40/'

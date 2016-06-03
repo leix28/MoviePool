@@ -62,5 +62,8 @@ def cache_api(res_id):
 def progress_api(res_id):
     return json.dumps(db.getProgress(res_id))
 
-
+@app.route('/api/download/<res_id>')
+def download_api(res_id):
+    return json.dumps(db.getDownloaded(res_id))
+    
 

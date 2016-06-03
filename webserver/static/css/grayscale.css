@@ -390,3 +390,6 @@ body {
     background-size: cover;
     -o-background-size: cover;
 }
+.center {
+    text-align: center;
+}
