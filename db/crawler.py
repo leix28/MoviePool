@@ -95,15 +95,13 @@ def fetchDouban(doubanID):
             data.update({'IMDB': imdb})
         except:
             logging.warning("ERROR in load IMDB ID")
+            traceback.print_exc()
     except:
         logging.warning(doubanID + 'fetchdata failed')
         return None
     return data
 
 def fetchIMDB(IMDBID):
-    pass
-
-def getMoviePopDouban():
     pass
 
 if __name__ == '__main__':
