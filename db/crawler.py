@@ -86,7 +86,15 @@ def fetchDouban(doubanID):
     return data
 
 def fetchIMDB(IMDBID):
-    pass
+    try:
+        r = requests.get('http://www.imdb.com/title/' + IMDBID)
+        assert r.status_code == 200
+        soup = BeautifulSoup(r.text, 'lxml')
+        imdbScore = soup.find(class_='ratingValue').text
+        data = {'score' : imdbScore.split('/')[0] }
+    except:
+        logging.warning("ERROR in IMDB Score")
+    return data
 
 if __name__ == '__main__':
     print searchMovieDoubanID(u"速度与激情")

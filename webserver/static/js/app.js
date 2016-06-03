@@ -73,8 +73,12 @@ movieApp.controller('movieController', function movieController($scope, $http) {
         data.directorslist.push(entry.name);
       });
       $scope.movie=data;
-      console.log(data);
+      $http.get("/api/imdb/" + data.IMDB).success(function(data){
+        $scope.imdb=data;
+        console.log(data);
+      });
     })
+
     $http.get("/api/resources/"+$scope.imdbId).success(function(data){
         $scope.resources.list = data;
         $scope.resources.ready=true;

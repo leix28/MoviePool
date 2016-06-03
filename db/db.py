@@ -5,7 +5,7 @@ import logging
 import json
 import time
 from crawler import searchMovieDouban, fetchDouban, \
-    searchByrResources, getMoviePopDouban
+    searchByrResources, getMoviePopDouban, fetchIMDB
 
 
 DB = "MovieDB"
@@ -76,7 +76,20 @@ def getDoubanAdvance(doubanID):
     return data
 
 def getIMDBBasic(IMDBID):
-    pass
+    coll = MongoClient()[DB][IMDBBasic]
+    cur = coll.find({'IMDBid': IMDBID})
+    data = None
+    if cur.count() > 0:
+        data = cur[0]
+    if (data is None) or (data[TIME_STAMP] + TIME_OUT < time.time()):
+        ndata = fetchIMDB(IMDBID)
+        if ndata is None:
+            return data
+        ndata.update({TIME_STAMP : time.time()})
+        result = coll.update_one({'IMDBid': IMDBID}, {'$set': ndata}, upsert=True)
+        logging.info(result)
+        data = ndata
+    return data
 
 def getIMDBID(doubanID):
     pass
