@@ -5,9 +5,10 @@ import logging
 import json
 import time
 from crawler import searchMovieDouban, fetchDouban, searchByrResources
-
+from downloader import getDownloadStatusEach
 
 DB = "MovieDB"
+DownloadBasic = 'DownloadBasic'  #unique 'byr_id'
 DoubanBasic = 'DoubanBasic'      #unique "id"
 DoubanAdvance = 'DoubanAdvance'  #unique "id"
 IMDBBasic = 'IMDBBasic'          #unique "IMDBid"
@@ -60,12 +61,19 @@ def getIMDBID(doubanID):
 def getDoubanID(IMDBID):
     pass
 
+def getResourcesHash(r):
+    coll = MongoClient()[DB][DownloadBasic]
+    for item in r:
+        cur = coll.find({'byr_id': item['download_id']})
+        if cur.count() > 0:
+            item['bt_hash'] = cur[0]['bt_hash']
+        else:
+            item['bt_hash'] = None
+
 def getMovieResources(IMDBid):
     r = searchByrResources(IMDBid)
-    for idx in xrange(len(r)):
-        r[idx]['cached'] = False
-        r[idx]['progress'] = 2
-        r[idx]['download_id'] = 9
+    getResourcesHash(r)
+    getDownloadStatusEach(r)
 
     return r
 

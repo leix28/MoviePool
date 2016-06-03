@@ -4,6 +4,7 @@ import logging
 import sys
 import json
 import traceback  
+import urlparse
 from bs4 import BeautifulSoup
 
 
@@ -23,11 +24,13 @@ def searchByrResources(imdbId):
             cols = row.find_all('td', class_='rowfollow')
             if not len(cols) or len(cols)<9:
                 continue
+            download_id = urlparse.parse_qs(urlparse.urlparse(cols[1].find_all('a')[0].get('href')).query)['id'][0]
             name = cols[1].select('a b')[0].contents[0]
             size = ''.join(filter(lambda s:isinstance(s, unicode), cols[4].contents))
             up = (cols[5].find_all('font') or cols[5].find_all('a') or cols[5].find_all('span'))[0].contents[0]
             down = (cols[6].find_all('a') or [cols[6]])[0].contents[0]
             result.append({
+                'download_id': download_id,
                 'name': name,
                 'size': size,
                 'uploading': up,
