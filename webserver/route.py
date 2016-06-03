@@ -39,6 +39,17 @@ def movie_api(id):
         pass
     return json.dumps(data)
 
+@app.route('/api/imdb/<IMDBID>')
+def imdb_api(IMDBID):
+    data = db.getIMDBBasic(IMDBID)
+    if data is None:
+        return ""
+    try:
+        del data['_id']
+    except:
+        pass
+    return json.dumps(data)
+
 @app.route('/api/resources/<id>')
 def resources_api(id):
     return json.dumps(db.getMovieResources(id))
