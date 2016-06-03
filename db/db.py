@@ -6,9 +6,11 @@ import json
 import time
 from crawler import searchMovieDouban, fetchDouban, \
     searchByrResources, getMoviePopDouban, fetchIMDB
+from downloader import getDownloadStatusEach, startNewDownload
 
 
 DB = "MovieDB"
+DownloadBasic = 'DownloadBasic'  #unique 'byr_id'
 DoubanBasic = 'DoubanBasic'      #unique "id"
 DoubanAdvance = 'DoubanAdvance'  #unique "id"
 IMDBBasic = 'IMDBBasic'          #unique "IMDBid"
@@ -97,17 +99,41 @@ def getIMDBID(doubanID):
 def getDoubanID(IMDBID):
     pass
 
+def getResourcesHash(r):
+    coll = MongoClient()[DB][DownloadBasic]
+    for item in r:
+        cur = coll.find({'byr_id': item['download_id']})
+        if cur.count() > 0:
+            item['bt_hash'] = cur[0]['bt_hash']
+        else:
+            item['bt_hash'] = None
+
 def getMovieResources(IMDBid):
     r = searchByrResources(IMDBid)
-    for idx in xrange(len(r)):
-        r[idx]['cached'] = False
-        r[idx]['progress'] = 2
-        r[idx]['download_id'] = 9
+    getResourcesHash(r)
+    getDownloadStatusEach(r)
 
     return r
 
+def cacheResources(resId):
+    coll = MongoClient()[DB][DownloadBasic]
+    cur = coll.find({'byr_id': resId})
+    if cur.count() > 0:
+        return {'reason': 1}
+    else:
+        ret,h = startNewDownload(resId)
+        print ret, h
+        if not ret:
+            return {'reason': 2}
+        else:
+            coll = MongoClient()[DB][DownloadBasic]
+            data = {'byr_id': resId,'bt_hash': h}
+            coll.update_one({'byr_id': resId}, {'$set': data}, upsert=True)
+            return {'reason': 0}
+
+
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,\
+    logging.basicConfig(level=logging.DEBUG,\
         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',\
         datefmt='%m-%d %H:%M')
     # print search(u"速度与激情")

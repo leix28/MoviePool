@@ -51,7 +51,6 @@ var movieApp = angular.module('movieApp', []);
 
 movieApp.controller('movieController', function movieController($scope, $http) {
     $scope.resources = {ready: false, list: []};
-    $scope.imdbId = 'tt0068646';
     $scope.download = function(item){
         if(item.cached){
             $('#iframe_for_download').prop('src', '/api/download/'+item.download_id);
@@ -59,6 +58,7 @@ movieApp.controller('movieController', function movieController($scope, $http) {
             // TODO: 注册完成通知
         }else{
             $http.get('/api/cache/'+item.download_id).success(function(data){
+                console.log(data)
                 // TODO: 注册完成通知
             });
         }
@@ -78,9 +78,13 @@ movieApp.controller('movieController', function movieController($scope, $http) {
         console.log(data);
       });
     })
+    $scope.$watch('movie',function(newValue,oldValue){
+        if(newValue && newValue.IMDB){
+            $http.get("/api/resources/"+newValue.IMDB).success(function(data){
+                $scope.resources.list = data;
+                $scope.resources.ready=true;
+            });
 
-    $http.get("/api/resources/"+$scope.imdbId).success(function(data){
-        $scope.resources.list = data;
-        $scope.resources.ready=true;
+        }
     });
 });

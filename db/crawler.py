@@ -3,12 +3,14 @@ import requests
 import logging
 import sys
 import json
-import traceback
+import traceback  
+import urlparse
 from bs4 import BeautifulSoup
 import re
 
 URL = 'https://api.douban.com'
 BYR_SEARCH_URL = 'http://bt.byr.cn/torrents.php'
+BYR_DOWNLOAD_URL = 'http://bt.byr.cn/download.php'
 BYR_COOKIE = {'Cookie': 'Hm_lvt_9ea605df687f067779bde17347db8645=1463235397,1463305118,1463663039,1463885401; Hm_lpvt_9ea605df687f067779bde17347db8645=1464697392; c_secure_uid=MTgyNzAz; c_secure_pass=e27cebdda92981ed700ee16cab8efa99; c_secure_ssl=bm9wZQ%3D%3D; c_secure_tracker_ssl=bm9wZQ%3D%3D; c_secure_login=bm9wZQ%3D%3D'}
 
 def searchByrResources(imdbId):
@@ -23,11 +25,13 @@ def searchByrResources(imdbId):
             cols = row.find_all('td', class_='rowfollow')
             if not len(cols) or len(cols)<9:
                 continue
+            download_id = urlparse.parse_qs(urlparse.urlparse(cols[1].find_all('a')[0].get('href')).query)['id'][0]
             name = cols[1].select('a b')[0].contents[0]
             size = ''.join(filter(lambda s:isinstance(s, unicode), cols[4].contents))
             up = (cols[5].find_all('font') or cols[5].find_all('a') or cols[5].find_all('span'))[0].contents[0]
             down = (cols[6].find_all('a') or [cols[6]])[0].contents[0]
             result.append({
+                'download_id': download_id,
                 'name': name,
                 'size': size,
                 'uploading': up,
@@ -39,6 +43,17 @@ def searchByrResources(imdbId):
         logging.warning('searchByrResources {} {}'.format(imdbId, e))
         traceback.print_exc()
     return []
+
+def getByrTorrent(ByrId):
+    try:
+        arg = {'id': ByrId}
+        r = requests.get(BYR_DOWNLOAD_URL, params=arg, headers=BYR_COOKIE)
+        assert r.status_code == 200
+        return r.content
+    except Exception, e:
+        logging.warning('getByrTorrent {}'.format(ByrId))
+        traceback.print_exc()
+    return None
 
 def searchMovieDouban(query, start=0, count=5):
     '''
@@ -80,6 +95,7 @@ def fetchDouban(doubanID):
             data.update({'IMDB': imdb})
         except:
             logging.warning("ERROR in load IMDB ID")
+            traceback.print_exc()
     except:
         logging.warning(doubanID + 'fetchdata failed')
         return None
