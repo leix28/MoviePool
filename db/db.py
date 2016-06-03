@@ -4,7 +4,8 @@ from pymongo import MongoClient
 import logging
 import json
 import time
-from crawler import searchMovieDouban, fetchDouban, searchByrResources
+from crawler import searchMovieDouban, fetchDouban, \
+    searchByrResources, getMoviePopDouban
 
 
 DB = "MovieDB"
@@ -19,14 +20,23 @@ TIME_OUT = 48 * 3600
 def search(query, start=0, count=5):
     data = searchMovieDouban(query, start, count)
     if data is None:
-        return []
-    idlist = []
+        return None
     coll = MongoClient()[DB][DoubanBasic]
     for item in data:
-        idlist.append(item['id'])
         result = coll.update_one({'id': item['id']}, {'$set': item}, upsert=True)
         logging.info(result)
-    return idlist
+    return data
+
+def getpop(count=8):
+    data = getMoviePopDouban(count)
+    if data is None:
+        return None
+    coll = MongoClient()[DB][DoubanBasic]
+    for item in data:
+        result = coll.update_one({'id': item['id']}, {'$set': item}, upsert=True)
+        logging.info(result)
+    return data
+
 
 def getDoubanBasic(doubanID):
     coll = MongoClient()[DB][DoubanBasic]

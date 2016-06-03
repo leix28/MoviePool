@@ -3,7 +3,7 @@ import requests
 import logging
 import sys
 import json
-import traceback  
+import traceback
 from bs4 import BeautifulSoup
 
 
@@ -37,7 +37,7 @@ def searchByrResources(imdbId):
         return result
     except Exception, e:
         logging.warning('searchByrResources {} {}'.format(imdbId, e))
-        traceback.print_exc()  
+        traceback.print_exc()
     return []
 
 def searchMovieDouban(query, start=0, count=5):
@@ -57,6 +57,15 @@ def searchMovieDouban(query, start=0, count=5):
         return None
 
     return json.loads(r.text)['subjects']
+
+def getMoviePopDouban(count=8):
+    try:
+        r = requests.get(URL + '/v2/movie/in_theaters')
+        assert r.status_code == 200
+    except:
+        logging.warning('getMoviePopDouban Failed')
+        return None
+    return json.loads(r.text)['subjects'][:count]
 
 def fetchDouban(doubanID):
     try:
