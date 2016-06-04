@@ -9,7 +9,7 @@ from webserver import app
 def initDownloader():
     global client
     logging.info("Init")
-    DelugeRPCClient.timeout=3
+    DelugeRPCClient.timeout=6
     client = DelugeRPCClient(app.config['DELUGE_HOST'], 58846, app.config['DELUGE_USER'], app.config['DELUGE_PASSWD'])
     client.connect()
     logging.info("connected={}".format(client.connected))
@@ -48,8 +48,8 @@ def getOfflineDownloadPath(bt_hash):
         logging.warning("ConnectionLostException")
         client.connected = False
     if ret and ret.has_key(bt_hash):
-        f = max(ret[bt_hash]['files'], lambda t: t['size'])
-        return app.config['OFFLINE_DOWNLOADED_PATH']+f[0]['path']
+        f = max(ret[bt_hash]['files'], key=lambda t: t['size'])
+        return app.config['OFFLINE_DOWNLOADED_PATH']+f['path']
     return None
 
 def getDownloadStatusEach(entries):
