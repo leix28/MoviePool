@@ -16,7 +16,7 @@ BYR_DOWNLOAD_URL = 'http://bt.byr.cn/download.php'
 def searchByrResources(imdbId):
     try:
         arg = {'search': imdbId, 'search_area': 4}
-        r = requests.get(BYR_SEARCH_URL, params=arg, headers={'cookie': app.config['BYR_COOKIE']})
+        r = requests.get(BYR_SEARCH_URL, params=arg, headers={'cookie': app.config['BYR_COOKIE']}, timeout=3)
         assert r.status_code == 200
 
         result = []
@@ -47,7 +47,7 @@ def searchByrResources(imdbId):
 def getByrTorrent(ByrId):
     try:
         arg = {'id': ByrId}
-        r = requests.get(BYR_DOWNLOAD_URL, params=arg, headers={'cookie': app.config['BYR_COOKIE']})
+        r = requests.get(BYR_DOWNLOAD_URL, params=arg, headers={'cookie': app.config['BYR_COOKIE']}, timeout=3)
         assert r.status_code == 200
         return r.content
     except Exception, e:
@@ -65,7 +65,7 @@ def searchMovieDouban(query, start=0, count=5):
             'count' : count
             }
     try:
-        r = requests.get(URL + '/v2/movie/search', params=data)
+        r = requests.get(URL + '/v2/movie/search', params=data, timeout=3)
         assert r.status_code == 200
     except:
         logging.warning(query + 'Search Failed')
@@ -75,7 +75,7 @@ def searchMovieDouban(query, start=0, count=5):
 
 def getMoviePopDouban(count=8):
     try:
-        r = requests.get(URL + '/v2/movie/in_theaters')
+        r = requests.get(URL + '/v2/movie/in_theaters', timeout=3)
         assert r.status_code == 200
     except:
         logging.warning('getMoviePopDouban Failed')
@@ -84,11 +84,11 @@ def getMoviePopDouban(count=8):
 
 def fetchDouban(doubanID):
     try:
-        r = requests.get(URL + '/v2/movie/subject/' + doubanID)
+        r = requests.get(URL + '/v2/movie/subject/' + doubanID, timeout=3)
         assert r.status_code == 200
         data = json.loads(r.text)
         try:
-            r = requests.get('https://movie.douban.com/subject/' + doubanID)
+            r = requests.get('https://movie.douban.com/subject/' + doubanID, timeout=3)
             assert r.status_code == 200
             soup = BeautifulSoup(r.text, 'lxml')
             imdb = soup.find(id='info').find('a', href=re.compile("imdb.com"), text=re.compile("tt\\d*")).text
@@ -103,7 +103,7 @@ def fetchDouban(doubanID):
 
 def fetchIMDB(IMDBID):
     try:
-        r = requests.get('http://www.imdb.com/title/' + IMDBID)
+        r = requests.get('http://www.imdb.com/title/' + IMDBID, timeout=3)
         assert r.status_code == 200
         soup = BeautifulSoup(r.text, 'lxml')
         imdbScore = soup.find(class_='ratingValue').text
