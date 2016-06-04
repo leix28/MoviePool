@@ -1,5 +1,5 @@
 import bencode, hashlib, StringIO
-from deluge_client import DelugeRPCClient
+from deluge_client.client import DelugeRPCClient,ConnectionLostException,CallTimeoutException
 import logging
 import base64
 
@@ -9,6 +9,7 @@ from webserver import app
 def initDownloader():
     global client
     logging.info("Init")
+    DelugeRPCClient.timeout=3
     client = DelugeRPCClient(app.config['DELUGE_HOST'], 58846, app.config['DELUGE_USER'], app.config['DELUGE_PASSWD'])
     client.connect()
     logging.info("connected={}".format(client.connected))
@@ -24,14 +25,28 @@ def startNewDownload(ByrId):
     if torrent is None:
         return (False, None)
     thash = getTorrentHash(torrent)
-    ret = client.call('core.add_torrent_file', '', base64.b64encode(torrent), {})
-    logging.debug(ret)
+    if not client.connected:
+        initDownloader()
+    ret = ''
+    try:
+        ret = client.call('core.add_torrent_file', '', base64.b64encode(torrent), {})
+        logging.debug(ret)
+    except ConnectionLostException, e:
+        logging.warning("ConnectionLostException")
+        client.connected = False
 
     return (ret==thash, thash)
 
 def getOfflineDownloadPath(bt_hash):
-    ret = client.call('core.get_torrents_status', {'hash': bt_hash}, ['files'])
-    logging.debug(ret)
+    if not client.connected:
+        initDownloader()
+    ret = None
+    try:
+        ret = client.call('core.get_torrents_status', {'hash': bt_hash}, ['files'])
+        logging.debug(ret)
+    except ConnectionLostException, e:
+        logging.warning("ConnectionLostException")
+        client.connected = False
     if ret and ret.has_key(bt_hash):
         f = max(ret[bt_hash]['files'], lambda t: t['size'])
         return app.config['OFFLINE_DOWNLOADED_PATH']+f[0]['path']
@@ -47,8 +62,15 @@ def getDownloadStatusEach(entries):
         else:
             item['progress'] = -1
             item['finished'] = False
-    ret = client.call('core.get_torrents_status', {'hash': query}, ['is_finished','progress'])
-    logging.debug(ret)
+    if not client.connected:
+        initDownloader()
+    ret = {}
+    try:
+        ret = client.call('core.get_torrents_status', {'hash': query}, ['is_finished','progress'])
+        logging.debug(ret)
+    except ConnectionLostException, e:
+        logging.warning("ConnectionLostException")
+        client.connected = False
 
     for item in entries:
         if item['bt_hash'] and ret.has_key(item['bt_hash']):
