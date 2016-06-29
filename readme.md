@@ -1,1 +1,1 @@
-`sudo pip install lxml bencode deluge-client bs4 flask pymongo flup==1.0.2`
+依赖安装：`sudo pip install lxml bencode deluge-client bs4 flask pymongo flup==1.0.2`
