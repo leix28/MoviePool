@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import webserver
 import logging
+import os, pwd
 import config
 
 if __name__ == "__main__":
@@ -13,5 +14,7 @@ if __name__ == "__main__":
     if webserver.app.config['DEBUG']:
         webserver.app.run(host='0.0.0.0')
     else:
+        uid = pwd.getpwnam('www-data')
+        os.setuid(uid)
         from flup.server.fcgi import WSGIServer
         WSGIServer(webserver.app, bindAddress=webserver.app.config['FASTCGI_SOCK']).run()
