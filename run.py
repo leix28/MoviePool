@@ -11,7 +11,7 @@ if __name__ == "__main__":
         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',\
         datefmt='%m-%d %H:%M')
     webserver.app.config.from_object('config.BasicConfig')
-    if webserver.app.config['DEBUG']:
+    if webserver.app.config['NO_FASTCGI']:
         webserver.app.run(host='0.0.0.0')
     else:
         uid = pwd.getpwnam('www-data')[2]
