@@ -6,6 +6,7 @@ import config
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,\
+        filename='moviepool.log',\
         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',\
         datefmt='%m-%d %H:%M')
     webserver.app.config.from_object('config.BasicConfig')
