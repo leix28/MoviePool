@@ -14,7 +14,7 @@ if __name__ == "__main__":
     if webserver.app.config['DEBUG']:
         webserver.app.run(host='0.0.0.0')
     else:
-        uid = pwd.getpwnam('www-data')
+        uid = pwd.getpwnam('www-data')[2]
         os.setuid(uid)
         from flup.server.fcgi import WSGIServer
         WSGIServer(webserver.app, bindAddress=webserver.app.config['FASTCGI_SOCK']).run()
