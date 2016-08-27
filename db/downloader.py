@@ -8,7 +8,7 @@ from webserver import app
 
 def initDownloader():
     global client
-    logging.info("Init")
+    logging.info("initDownloader")
     DelugeRPCClient.timeout=6
     client = DelugeRPCClient(app.config['DELUGE_HOST'], 58846, app.config['DELUGE_USER'], app.config['DELUGE_PASSWD'])
     client.connect()
@@ -29,6 +29,7 @@ def startNewDownload(ByrId):
         initDownloader()
     ret = ''
     try:
+        logging.info('New download {}'.format(ByrId))
         ret = client.call('core.add_torrent_file', '', base64.b64encode(torrent), {})
         logging.debug(ret)
     except ConnectionLostException, e:

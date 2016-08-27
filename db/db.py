@@ -122,7 +122,6 @@ def cacheResources(resId):
         return {'reason': 1}
     else:
         ret,h = startNewDownload(resId)
-        print ret, h
         if not ret:
             return {'reason': 2}
         else:
